@@ -1,0 +1,12 @@
+canvas {
+    display: block;
+    margin: auto;
+    border: 1px solid black;
+}
+
+#tetris
+{
+	font-family: "Lucida Console", Monaco, monospace;
+	letter-spacing:1.5em;
+	font-size: large;
+}
