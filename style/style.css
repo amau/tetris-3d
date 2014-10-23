@@ -10,3 +10,39 @@ canvas {
 	letter-spacing:1.5em;
 	font-size: large;
 }
+strong
+{
+	color:#ff0000;
+}
+.white
+{
+	color:white;
+}
+.cyan
+{
+	color:cyan;
+}
+.blue
+{
+	color:blue;
+}
+.orange
+{
+	color:orange;
+}
+.yellow
+{
+	color:yellow;
+}
+.green
+{
+	color:green;
+}
+.purple
+{
+	color:purple;
+}
+.red
+{
+	color:red;
+}
