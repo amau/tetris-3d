@@ -42,7 +42,7 @@ public class Tetris implements EntryPoint
 			"rgba(255,0,255,1)");
 		initHandlers();
 
-canvas.setFocus(true);
+		canvas.setFocus(true);
 		// setup timer
 		final Timer timer = new Timer()
 		{
@@ -65,6 +65,11 @@ canvas.setFocus(true);
 			0,
 			width,
 			height);
+		context.setFillStyle("rgba(0,0,255,1)");
+		context.fillRect(0,
+			0,
+			width,
+			2 * Tetris.BLOCK_SIZE);
 		block.draw(context);
 	}
 
@@ -73,32 +78,37 @@ canvas.setFocus(true);
 	{
 		canvas.addKeyDownHandler(new KeyDownHandler()
 		{
-			
+
 			public void onKeyDown(KeyDownEvent event)
 			{
 				int code = event.getNativeKeyCode();
 				if (KeyCodes.KEY_DOWN == code)
 				{
-					if(block.isMove(0))
+					if (block.isMove(0))
 					{
 						block.move(0);
 					}
-				}else if(KeyCodes.KEY_LEFT == code)
+				}
+				else if (KeyCodes.KEY_LEFT == code)
 				{
-					if(block.isMove(-1))
+					if (block.isMove(-1))
 					{
 						block.move(-1);
 					}
-				}else if(KeyCodes.KEY_RIGHT == code)
+				}
+				else if (KeyCodes.KEY_RIGHT == code)
 				{
-					if(block.isMove(1))
+					if (block.isMove(1))
 					{
 						block.move(1);
 					}
 				}
-				else if(KeyCodes.KEY_SPACE == code)
+				else if (KeyCodes.KEY_SPACE == code)
 				{
-					block.rotateClockWise();
+					if (block.canRotate())
+					{
+						block.rotateClockWise();
+					}
 				}
 			}
 		});
