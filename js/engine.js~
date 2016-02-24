@@ -312,7 +312,9 @@ function update()
     thing();
     if(checkPiecePosition(horizontal,vertical + 1,current,rotation))
     {
-        vertical++;  
+        vertical++;
+        $("#board").empty();
+        drawPieceAndBoard(horizontal,vertical,current,rotation);
     }
     else
     {
@@ -321,13 +323,11 @@ function update()
         newPiece();
         if(!checkPiecePosition(horizontal,vertical+1,current,rotation))
         {
-            // GAME OVER, start over again.
             init();
-        }    
+        }
+        $("#board").empty();
+        drawPieceAndBoard(horizontal,vertical,current,rotation);
     }
-    // Clear the screen to paint again.
-    $("#board").empty();
-    drawPieceAndBoard(horizontal,vertical,current,rotation);
 }
 
 /**
