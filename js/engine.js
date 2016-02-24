@@ -11,6 +11,18 @@ var s = { id: 's', size: 3, blocks: [0x06C0, 0x8C40, 0x6C00, 0x4620], colorName:
 var t = { id: 't', size: 3, blocks: [0x0E40, 0x4C40, 0x4E00, 0x4640], colorName: 'purple' , color: 5};
 var z = { id: 'z', size: 3, blocks: [0x0C60, 0x4C80, 0xC600, 0x2640], colorName: 'red'    , color: 6};
 
+
+var COLORS = 
+{
+ 0:'cyan', 
+ 1:'blue', 
+ 2:'orange', 
+ 3:'yellow', 
+ 4:'green', 
+ 5:'purple', 
+ 6:'red'
+}
+
 // Size of our board.
 var COLUMNS = 10;
 var ROWS = 22;
@@ -459,6 +471,45 @@ function keyPress( key ) {
     }
 }
 
+function printBoardToConsole(board)
+{
+    var row = "";
+    for(var i = 0; i < ROWS; i++)
+    {
+        for(var j = 0; j < COLUMNS; j++)
+        {
+            row = row + board[i][j];
+        }
+        console.log(row);
+        row = "";
+    }
+}
+
+function printBoardToElement(board, element)
+{
+    console.log(board);
+    var row = "";
+    for(var i = 0; i < ROWS; i++)
+    {
+        tbody = document.getElementById(element);;
+        tr = tbody.insertRow(-1);
+        var td = document.createElement("td");
+        row = "<td>";
+        for(var j = 0; j < COLUMNS; j++)
+        {
+            row = row + "<span class='" + getColor(board[i][j]) + "'>" + board[i][j] + "</span>";
+        }
+        row = row + "</td>";
+        td.innerHTML = row;
+        tr.appendChild(td);
+    }
+}
+
+function getColor(index)
+{
+    return COLORS[index];
+}
+
 function init()
 {
                board = [[0,0,0,0,0,0,0,0,0,0],
@@ -483,7 +534,60 @@ function init()
                 [0,0,0,0,0,0,0,0,0,0],
                 [0,0,0,0,0,0,0,0,0,0],
                 [0,0,0,0,0,0,0,0,0,0]];
+
+                console.log("************");
+                printBoardToConsole(test1);
+                console.log("************");
+                printBoardToElement(test2, "board");
+                console.log("************");
 }
+
+
+               test1 = [[0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0]];
+
+                test2 = [[0,1,0,0,0,0,0,0,0,0],
+                [0,0,2,0,0,0,0,0,0,0],
+                [0,0,0,3,0,0,0,0,0,0],
+                [0,0,0,0,4,0,0,0,0,0],
+                [0,0,0,0,0,5,0,0,0,0],
+                [0,0,0,0,0,0,6,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,1,0],
+                [0,0,6,0,0,1,0,0,0,0],
+                [0,0,6,0,0,2,0,0,0,0],
+                [0,0,6,0,0,3,0,0,0,0],
+                [0,0,6,0,0,4,0,0,0,0],
+                [0,0,0,0,3,0,2,2,2,0],
+                [0,0,0,0,3,0,2,2,2,0],
+                [0,0,0,0,3,0,0,2,0,0],
+                [1,1,1,1,3,0,0,2,0,0],
+                [0,0,0,0,0,1,0,0,0,0],
+                [0,0,0,0,0,2,0,0,0,0],
+                [0,0,0,0,0,3,0,0,0,0],
+                [0,0,0,0,0,4,0,0,0,0],
+                [0,0,0,0,0,5,0,0,0,0],
+                [0,0,0,0,0,6,0,0,0,0]];
 
 /**
 Main method of the game, it controls the initialization and the game loop.
@@ -492,8 +596,8 @@ function tetris()
 {
     clearInterval(interval);
     init();
-    newPiece();
-    interval = setInterval(update, 250);    
+    //newPiece();
+    //interval = setInterval(update, 250);    
 }
 
 $(document).ready(function()
