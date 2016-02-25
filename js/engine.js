@@ -669,6 +669,8 @@ renderTetrimino(2, z, 2)
 0001000000
 0001100000
 0000100000
+
+TODO: Needs to check for bounds.
 **/
 function renderTetrimino(x, tetrimino, rotation)
 {
