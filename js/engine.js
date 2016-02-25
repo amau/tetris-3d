@@ -3,14 +3,162 @@ var board;
 var interval;
 
 // Representation of tetris pieces with shape and color.
-var i = { id: 'i', size: 4, blocks: [0x0F00, 0x2222, 0x00F0, 0x4444], colorName: 'cyan'   , color: 0};
-var j = { id: 'j', size: 3, blocks: [0x44C0, 0x8E00, 0x6440, 0x0E20], colorName: 'blue'   , color: 1};
-var l = { id: 'l', size: 3, blocks: [0x4460, 0x0E80, 0xC440, 0x2E00], colorName: 'orange' , color: 2};
-var o = { id: 'o', size: 2, blocks: [0xCC00, 0xCC00, 0xCC00, 0xCC00], colorName: 'yellow' , color: 3};
-var s = { id: 's', size: 3, blocks: [0x06C0, 0x8C40, 0x6C00, 0x4620], colorName: 'green'  , color: 4};
-var t = { id: 't', size: 3, blocks: [0x0E40, 0x4C40, 0x4E00, 0x4640], colorName: 'purple' , color: 5};
-var z = { id: 'z', size: 3, blocks: [0x0C60, 0x4C80, 0xC600, 0x2640], colorName: 'red'    , color: 6};
+var i = { id: 'i', blocks: [0x0F00, 0x2222, 0x00F0, 0x4444], colorName: 'cyan'   , color: 0};
+/*
 
+0000
+1111
+0000
+0000
+
+0010
+0010
+0010
+0010
+
+0000
+0000
+1111
+0000
+
+0100
+0100
+0100
+0100
+*/
+var j = { id: 'j', blocks: [0x44C0, 0x8E00, 0x6440, 0x0E20], colorName: 'blue'   , color: 1};
+/*
+0100
+0100
+1100
+0000
+
+1000
+1110
+0000
+0000
+
+0110
+0100
+0100
+0000
+
+0000
+1110
+0010
+0000
+*/
+var l = { id: 'l', blocks: [0x4460, 0x0E80, 0xC440, 0x2E00], colorName: 'orange' , color: 2};
+/*
+0100
+0100
+0110
+0000
+
+0000
+1110
+1000
+0000
+
+1100
+0100
+0100
+0000
+
+0010
+1110
+0000
+0000
+*/
+var o = { id: 'o', blocks: [0xCC00, 0xCC00, 0xCC00, 0xCC00], colorName: 'yellow' , color: 3};
+/*
+1100
+1100
+0000
+0000
+
+1100
+1100
+0000
+0000
+
+1100
+1100
+0000
+0000
+
+1100
+1100
+0000
+0000
+*/
+var s = { id: 's', blocks: [0x06C0, 0x8C40, 0x6C00, 0x4620], colorName: 'green'  , color: 4};
+
+/*
+0000
+0110
+1100
+0000
+
+1000
+1100
+0100
+0000
+
+0110
+1100
+0000
+0000
+
+0100
+0110
+0010
+0000
+*/
+var t = { id: 't', blocks: [0x0E40, 0x4C40, 0x4E00, 0x4640], colorName: 'purple' , color: 5};
+/*
+0000
+1110
+0100
+0000
+
+0100
+1100
+0100
+0000
+
+0100
+1110
+0000
+0000
+
+0100
+0110
+0100
+0000
+*/
+var z = { id: 'z', blocks: [0x0C60, 0x4C80, 0xC600, 0x2640], colorName: 'red'    , color: 6};
+/*
+0000
+1100
+0110
+0000
+
+0100
+1100
+1000
+0000
+
+1100
+0110
+0000
+0000
+
+0010
+0110
+0100
+0000
+*/
 
 var COLORS = 
 {
@@ -27,24 +175,27 @@ var COLORS =
 // Size of our board.
 var COLUMNS = 10;
 var ROWS = 22;
+var TETRIMINO_SIZE = 4;
+var TETRIMINO_HEIGHT = TETRIMINO_SIZE;
+var TETRIMINO_WIDTH = TETRIMINO_SIZE;
 
 function paintPieceInBoard(x,y,piece,direction)
 {
     
 }
 
-function paintPiece(piece,direction)
+function paintPiece(piece, rotation)
 {
-    var blocks = piece.blocks[direction];
-    var first =  0xF000;
-    var second = 0x0F00;
-    var third =  0x00F0;
-    var fourth = 0x000F;
+    var blocks = piece.blocks[rotation];
+    var first =  0x000F << (3 * 4);
+    var second = 0x000F << (2 * 4);
+    var third =  0x000F << (1 * 4);
+    var fourth = 0x000F << (0 * 4);
     
-    console.log(format4block((blocks&first) >>12));
-    console.log(format4block((blocks&second) >>8));
-    console.log(format4block((blocks&third) >>4));
-    console.log(format4block(blocks&fourth));
+    console.log(format4block((blocks&first)  >> (3 * 4)));
+    console.log(format4block((blocks&second) >> (2 * 4)));
+    console.log(format4block((blocks&third)  >> (1 * 4)));
+    console.log(format4block(blocks&fourth)  >> (0 * 4));
 }
 
 /**
@@ -432,7 +583,7 @@ function test()
     {
         console.log("Piece can't be placed at ("+xa+","+ya+")");
     }
-    
+/**    
     
     console.log(isInvalid(3, 5)?"Invalid":"Valid");
     console.log(isInvalid(0, 0)?"Invalid":"Valid");
@@ -445,6 +596,7 @@ function test()
     console.log(getRowFromPiece(1,z,3));
     console.log(getRowFromPiece(2,z,3));
     console.log(getRowFromPiece(3,z,3));
+**/
 }
 function keyPress( key ) {
     switch ( key ) {
@@ -475,13 +627,13 @@ function keyPress( key ) {
 function printBoardToConsole(board)
 {
     var row = "";
-    for(var i = 0; i < ROWS; i++)
+    for(var i = 0; i < board.length; i++)
     {
-        for(var j = 0; j < COLUMNS; j++)
+        for(var j = 0; j < board[0].length; j++)
         {
             row = row + board[i][j];
         }
-        console.log(row);
+        console.log(Math.random().toFixed(4)+":"+row);
         row = "";
     }
 }
@@ -509,6 +661,72 @@ function printBoardToElement(board, element)
 function getColor(index)
 {
     return COLORS[index];
+}
+/**
+This function will render with a tetrimino in the size of the board. For example:
+renderTetrimino(2, z, 2)
+0000000000
+0001000000
+0001100000
+0000100000
+**/
+function renderTetrimino(x, tetrimino, rotation)
+{
+    var arr = [];
+    for(var i = 0; i < TETRIMINO_HEIGHT; i++)
+    {
+        var row = [];
+        for(var j = 0; j < COLUMNS; j++)
+        {
+            row.push(0);
+        }
+
+        arr.push(row);
+    }
+    for(var i = 0; i < TETRIMINO_HEIGHT; i++)
+    {
+        for(var j = x; j - x < TETRIMINO_WIDTH; j++)
+        {
+            pos = j - x;
+            block = tetrimino.blocks[rotation];
+            mask = 0x000F << ((TETRIMINO_SIZE - (i + 1)) * 4);
+            row = (block&mask) >> ((TETRIMINO_SIZE - (i + 1)) * 4) ;
+            arr[i][j] = position(pos, row);
+        }
+    }
+    return arr;
+}
+
+/**
+Given one a position and a row of a tetrimino, this function will return if that position is
+filled with a zero or an one.
+
+(0x0E80&0x0F00)>>8              -> 1110
+
+position(0, (0x0E80&0x0F00)>>8) -> 1
+position(1, (0x0E80&0x0F00)>>8) -> 1
+position(2, (0x0E80&0x0F00)>>8) -> 1
+position(3, (0x0E80&0x0F00)>>8) -> 0
+
+**/
+function position(x, row)
+{
+    var position = -1;
+    if(x < 0 || x > TETRIMINO_SIZE - 1)
+    {
+        console.log("Error, the position is outof bounds in position function.");
+    }
+    else
+    {
+        // Creates a mask to determine the position in the array:
+        // x = 0  then mask = 1000
+        // x = 1  then mask = 0100
+        // x = 2  then mask = 0010
+        // x = 3  then mask = 0001
+        var mask = 0x0001 << (TETRIMINO_SIZE - (x + 1));
+        position = (row&mask) >> (TETRIMINO_SIZE - (x + 1)); 
+    }
+    return position;
 }
 
 function init()
@@ -540,7 +758,38 @@ function init()
                 printBoardToConsole(test1);
                 console.log("************");
                 printBoardToElement(test2, "board");
-                console.log("************");
+                console.log("position: ");
+
+                paintPiece(z, 2);
+
+                console.log("render tetrimino: ");
+                printBoardToConsole(renderTetrimino(0, z, 2));
+                console.log("render tetrimino: ");
+                printBoardToConsole(renderTetrimino(1, z, 2));
+                console.log("render tetrimino: ");
+                printBoardToConsole(renderTetrimino(2, z, 2));
+                console.log("render tetrimino: ");
+                printBoardToConsole(renderTetrimino(3, z, 2));
+                console.log("render tetrimino: ");
+                printBoardToConsole(renderTetrimino(4, z, 2));
+                console.log("render tetrimino: ");
+                printBoardToConsole(renderTetrimino(5, z, 2));
+                console.log("render tetrimino: ");
+                printBoardToConsole(renderTetrimino(6, z, 2));
+                console.log("render tetrimino: ");
+                printBoardToConsole(renderTetrimino(7, z, 2));
+                console.log("render tetrimino: ");
+                printBoardToConsole(renderTetrimino(8, z, 2));
+                console.log("render tetrimino: ");
+                printBoardToConsole(renderTetrimino(9, z, 2));
+
+                console.log(format4block((0x0E80&0x0F00)>>8));
+                console.log(position(0,  (0x0E80&0x0F00)>>8));
+                console.log(position(1,  (0x0E80&0x0F00)>>8));
+                console.log(position(2,  (0x0E80&0x0F00)>>8));
+                console.log(position(3,  (0x0E80&0x0F00)>>8));
+
+
 }
 
 
