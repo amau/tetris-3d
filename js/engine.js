@@ -3,7 +3,7 @@ var board;
 var interval;
 
 // Representation of tetris pieces with shape and color.
-var i = { id: 'i', blocks: [0x0F00, 0x2222, 0x00F0, 0x4444], colorName: 'cyan'   , color: 0};
+var i = { id: 'i', blocks: [0x0F00, 0x2222, 0x00F0, 0x4444], colorName: 'cyan'   , color: 1};
 /*
 
 0000
@@ -26,7 +26,7 @@ var i = { id: 'i', blocks: [0x0F00, 0x2222, 0x00F0, 0x4444], colorName: 'cyan'  
 0100
 0100
 */
-var j = { id: 'j', blocks: [0x44C0, 0x8E00, 0x6440, 0x0E20], colorName: 'blue'   , color: 1};
+var j = { id: 'j', blocks: [0x44C0, 0x8E00, 0x6440, 0x0E20], colorName: 'blue'   , color: 2};
 /*
 0100
 0100
@@ -48,7 +48,7 @@ var j = { id: 'j', blocks: [0x44C0, 0x8E00, 0x6440, 0x0E20], colorName: 'blue'  
 0010
 0000
 */
-var l = { id: 'l', blocks: [0x4460, 0x0E80, 0xC440, 0x2E00], colorName: 'orange' , color: 2};
+var l = { id: 'l', blocks: [0x4460, 0x0E80, 0xC440, 0x2E00], colorName: 'orange' , color: 3};
 /*
 0100
 0100
@@ -70,7 +70,7 @@ var l = { id: 'l', blocks: [0x4460, 0x0E80, 0xC440, 0x2E00], colorName: 'orange'
 0000
 0000
 */
-var o = { id: 'o', blocks: [0xCC00, 0xCC00, 0xCC00, 0xCC00], colorName: 'yellow' , color: 3};
+var o = { id: 'o', blocks: [0xCC00, 0xCC00, 0xCC00, 0xCC00], colorName: 'yellow' , color: 4};
 /*
 1100
 1100
@@ -92,7 +92,7 @@ var o = { id: 'o', blocks: [0xCC00, 0xCC00, 0xCC00, 0xCC00], colorName: 'yellow'
 0000
 0000
 */
-var s = { id: 's', blocks: [0x06C0, 0x8C40, 0x6C00, 0x4620], colorName: 'green'  , color: 4};
+var s = { id: 's', blocks: [0x06C0, 0x8C40, 0x6C00, 0x4620], colorName: 'green'  , color: 5};
 
 /*
 0000
@@ -115,7 +115,7 @@ var s = { id: 's', blocks: [0x06C0, 0x8C40, 0x6C00, 0x4620], colorName: 'green' 
 0010
 0000
 */
-var t = { id: 't', blocks: [0x0E40, 0x4C40, 0x4E00, 0x4640], colorName: 'purple' , color: 5};
+var t = { id: 't', blocks: [0x0E40, 0x4C40, 0x4E00, 0x4640], colorName: 'purple' , color: 6};
 /*
 0000
 1110
@@ -137,7 +137,7 @@ var t = { id: 't', blocks: [0x0E40, 0x4C40, 0x4E00, 0x4640], colorName: 'purple'
 0100
 0000
 */
-var z = { id: 'z', blocks: [0x0C60, 0x4C80, 0xC600, 0x2640], colorName: 'red'    , color: 6};
+var z = { id: 'z', blocks: [0x0C60, 0x4C80, 0xC600, 0x2640], colorName: 'red'    , color: 7};
 /*
 0000
 1100
@@ -693,7 +693,7 @@ function renderTetrimino(x, tetrimino, rotation)
             block = tetrimino.blocks[rotation];
             mask = 0x000F << ((TETRIMINO_SIZE - (i + 1)) * 4);
             row = (block&mask) >> ((TETRIMINO_SIZE - (i + 1)) * 4) ;
-            arr[i][j] = position(pos, row);
+            arr[i][j] = position(pos, row) * tetrimino.color;
         }
     }
     return arr;
@@ -765,25 +765,25 @@ function init()
                 paintPiece(z, 2);
 
                 console.log("render tetrimino: ");
-                printBoardToConsole(renderTetrimino(0, z, 2));
+                printBoardToConsole(renderTetrimino(0, s, 2));
                 console.log("render tetrimino: ");
-                printBoardToConsole(renderTetrimino(1, z, 2));
+                printBoardToConsole(renderTetrimino(1, s, 2));
                 console.log("render tetrimino: ");
-                printBoardToConsole(renderTetrimino(2, z, 2));
+                printBoardToConsole(renderTetrimino(2, s, 2));
                 console.log("render tetrimino: ");
-                printBoardToConsole(renderTetrimino(3, z, 2));
+                printBoardToConsole(renderTetrimino(3, s, 2));
                 console.log("render tetrimino: ");
-                printBoardToConsole(renderTetrimino(4, z, 2));
+                printBoardToConsole(renderTetrimino(4, s, 2));
                 console.log("render tetrimino: ");
-                printBoardToConsole(renderTetrimino(5, z, 2));
+                printBoardToConsole(renderTetrimino(5, s, 2));
                 console.log("render tetrimino: ");
-                printBoardToConsole(renderTetrimino(6, z, 2));
+                printBoardToConsole(renderTetrimino(6, s, 2));
                 console.log("render tetrimino: ");
-                printBoardToConsole(renderTetrimino(7, z, 2));
+                printBoardToConsole(renderTetrimino(7, s, 2));
                 console.log("render tetrimino: ");
-                printBoardToConsole(renderTetrimino(8, z, 2));
+                printBoardToConsole(renderTetrimino(8, s, 2));
                 console.log("render tetrimino: ");
-                printBoardToConsole(renderTetrimino(9, z, 2));
+                printBoardToConsole(renderTetrimino(9, s, 2));
 
                 console.log(format4block((0x0E80&0x0F00)>>8));
                 console.log(position(0,  (0x0E80&0x0F00)>>8));
