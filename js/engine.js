@@ -624,6 +624,9 @@ function keyPress( key ) {
     }
 }
 
+/**
+This function writes the given array to the console.
+**/
 function printBoardToConsole(board)
 {
     var row = "";
@@ -637,7 +640,9 @@ function printBoardToConsole(board)
         row = "";
     }
 }
-
+/**
+This function renders the given in a html tbody element.
+**/
 function printBoardToElement(board, element)
 {
     console.log(board);
@@ -657,7 +662,9 @@ function printBoardToElement(board, element)
         tr.appendChild(td);
     }
 }
-
+/**
+Helper function that encapsulates the retrieval of the color from the color dictionary.
+**/
 function getColor(index)
 {
     return COLORS[index];
@@ -670,21 +677,12 @@ renderTetrimino(2, z, 2)
 0001100000
 0000100000
 
-TODO: Needs to check for bounds.
+It checks for the right and left bounds, if the tetrimino cant move in that direction
+it returns false.
 **/
 function renderTetrimino(x, tetrimino, rotation)
 {
-    var arr = [];
-    for(var i = 0; i < TETRIMINO_HEIGHT; i++)
-    {
-        var row = [];
-        for(var j = 0; j < COLUMNS; j++)
-        {
-            row.push(0);
-        }
-
-        arr.push(row);
-    }
+    var arr = createZerosGrid(COLUMNS, TETRIMINO_HEIGHT);
     for(var i = 0; i < TETRIMINO_HEIGHT; i++)
     {
         for(var j = x; j - x < TETRIMINO_WIDTH; j++)
@@ -692,8 +690,18 @@ function renderTetrimino(x, tetrimino, rotation)
             pos = j - x;
             block = tetrimino.blocks[rotation];
             mask = 0x000F << ((TETRIMINO_SIZE - (i + 1)) * 4);
-            row = (block&mask) >> ((TETRIMINO_SIZE - (i + 1)) * 4) ;
-            arr[i][j] = position(pos, row) * tetrimino.color;
+            row = (block&mask) >> ((TETRIMINO_SIZE - (i + 1)) * 4);
+            if(position(pos, row) && j < COLUMNS && j >= 0)
+            {
+                arr[i][j] = tetrimino.color;  
+            }
+            else
+            {
+                if(position(pos, row))
+                {
+                    return false;
+                }
+            }
         }
     }
     return arr;
@@ -731,59 +739,136 @@ function position(x, row)
     return position;
 }
 
+/**
+Given a render tetrimino, and a board, this function creates a new board matching
+both arrays using a elementwise OR.
+**/
+function drawTetriminoOnBoard(rowNum, renderedTetrimino, thisBoard)
+{
+    var arr = copyBoard(thisBoard);
+    for(var k = rowNum; k < rowNum + TETRIMINO_HEIGHT; k++)
+    {
+        for(var j = 0; j < COLUMNS; j++)
+        {
+
+            if(!(renderedTetrimino[k-rowNum][j] && thisBoard[k][j]))
+            {
+                if(renderedTetrimino[k-rowNum][j])
+                {
+                    arr[k][j] = renderedTetrimino[k-rowNum][j];
+                }
+                else
+                {
+                    arr[k][j] = thisBoard[k][j];
+                }
+                
+            }
+            else
+            {
+                // If a pieze in the rendered tetrimino is in the same position
+                // as one in the board the position is invalid.
+                return false;
+            }
+            
+        } 
+    }
+    return arr;
+}
+function copyBoard(board)
+{
+    var arr = createZerosGrid(COLUMNS, ROWS);
+    for(var k = 0; k < ROWS; k++)
+    {
+        for(var j = 0; j < COLUMNS; j++)
+        {
+            arr[k][j] = board[k][j];
+        }
+    }
+    return arr;
+}
+/**
+Creates a zero filled array with the dimensions of regular tetris board.
+**/
+function createCleanBoard()
+{
+    return createZerosGrid(COLUMNS, ROWS);
+}
+/**
+Creates a zero filled array with given dimensions.
+**/
+function createZerosGrid(width, height)
+{
+    var arr = [];
+    for(var i = 0; i < height; i++)
+    {
+        var row = [];
+        for(var j = 0; j < width; j++)
+        {
+            row.push(0);
+        }
+
+        arr.push(row);
+    }
+    return arr;
+}
+
 function init()
 {
-               board = [[0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0]];
+                board = createCleanBoard();
 
                 console.log("************");
                 printBoardToConsole(test1);
+
+
+                tet = renderTetrimino(5, i, 1);
+
+                console.log("************");
+                printBoardToConsole(tet);
+
+                
+                
+                newtest = drawTetriminoOnBoard(5, tet, test1);
+                
+                console.log("New Test ************");
+                printBoardToConsole(newtest);
+                
+                tet2 = renderTetrimino(5, i, 2);
+
+                console.log("New Test ************");
+                printBoardToConsole(tet2);
+                
+                secondNew = drawTetriminoOnBoard(3, tet2, newtest);
+                if(secondNew)
+                {
+                    console.log("Second New ************");
+                    printBoardToConsole(secondNew);
+                }
+                else
+                {
+                    console.log("The position is invalid because pieces overlap.");
+                }
+                
+
                 console.log("************");
                 printBoardToElement(test2, "board");
                 console.log("position: ");
 
                 paintPiece(z, 2);
 
-                console.log("render tetrimino: ");
-                printBoardToConsole(renderTetrimino(0, s, 2));
-                console.log("render tetrimino: ");
-                printBoardToConsole(renderTetrimino(1, s, 2));
-                console.log("render tetrimino: ");
-                printBoardToConsole(renderTetrimino(2, s, 2));
-                console.log("render tetrimino: ");
-                printBoardToConsole(renderTetrimino(3, s, 2));
-                console.log("render tetrimino: ");
-                printBoardToConsole(renderTetrimino(4, s, 2));
-                console.log("render tetrimino: ");
-                printBoardToConsole(renderTetrimino(5, s, 2));
-                console.log("render tetrimino: ");
-                printBoardToConsole(renderTetrimino(6, s, 2));
-                console.log("render tetrimino: ");
-                printBoardToConsole(renderTetrimino(7, s, 2));
-                console.log("render tetrimino: ");
-                printBoardToConsole(renderTetrimino(8, s, 2));
-                console.log("render tetrimino: ");
-                printBoardToConsole(renderTetrimino(9, s, 2));
+                for(var k = -3; k < 10; k++)
+                {
+                    render = renderTetrimino(k, i, 1);
+                    console.log("render tetrimino: ");
+                    if(render)
+                    {
+                        printBoardToConsole(render);
+                    } 
+                    else
+                    {
+                        console.log("Out of bounds");
+                    } 
+                }
+                
 
                 console.log(format4block((0x0E80&0x0F00)>>8));
                 console.log(position(0,  (0x0E80&0x0F00)>>8));
@@ -795,28 +880,7 @@ function init()
 }
 
 
-               test1 = [[0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0,0]];
+               test1 = createCleanBoard();
 
                 test2 = [[0,1,0,0,0,0,0,0,0,0],
                 [0,0,2,0,0,0,0,0,0,0],
