@@ -774,6 +774,9 @@ function drawTetriminoOnBoard(rowNum, renderedTetrimino, thisBoard)
     }
     return arr;
 }
+/**
+Creates a copy of the board and returns the new array.
+**/
 function copyBoard(board)
 {
     var arr = createZerosGrid(COLUMNS, ROWS);
@@ -810,6 +813,15 @@ function createZerosGrid(width, height)
         arr.push(row);
     }
     return arr;
+}
+/**
+If the position is feasible, this method returns a new array with the
+configuration given.
+**/
+function isValidMove(tetrimino, x, y, rotation, board)
+{
+    //TODO:
+    return board;
 }
 
 function init()
