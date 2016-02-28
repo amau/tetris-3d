@@ -779,6 +779,7 @@ Creates a copy of the board and returns the new array.
 **/
 function copyBoard(board)
 {
+    console.log(board);
     var arr = createZerosGrid(COLUMNS, ROWS);
     for(var k = 0; k < ROWS; k++)
     {
@@ -820,13 +821,42 @@ configuration given.
 **/
 function isValidMove(tetrimino, x, y, rotation, board)
 {
-    //TODO:
+    console.log(x+","+y+","+rotation);
+
+    renderedTetrimino = renderTetrimino(x, tetrimino, rotation);
+
+    console.log(renderedTetrimino);
+
+    if(renderedTetrimino)
+    {
+        newBoard = drawTetriminoOnBoard(y, renderedTetrimino, board);
+        if(newBoard)
+        {
+            return newBoard;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    else
+    {
+        return false;
+    }
+
     return board;
 }
 
 function init()
 {
                 board = createCleanBoard();
+
+                console.log("************");
+                printBoardToConsole(board);
+                newBoard = isValidMove(i, 4, 1, 2,board);
+
+                console.log("************");
+                printBoardToConsole(newBoard);
 
                 console.log("************");
                 printBoardToConsole(test1);
