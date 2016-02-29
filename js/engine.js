@@ -450,11 +450,7 @@ function persistPiece(x, y, piece, rotation)
 
 
 
-var vertical = 0;
-var horizontal = 4;
-var rotation = 0;
-var current;
-var pieces = [i,s,z,l,j,o,t];
+
 
 /**
 This function will spawn a new piece into the board, it sets the original position and rotation.
@@ -746,20 +742,30 @@ both arrays using a elementwise OR.
 function drawTetriminoOnBoard(rowNum, renderedTetrimino, thisBoard)
 {
     var arr = copyBoard(thisBoard);
-    for(var k = rowNum; k < rowNum + TETRIMINO_HEIGHT; k++)
+    for(var k = 0; k < TETRIMINO_HEIGHT; k++)
     {
         for(var j = 0; j < COLUMNS; j++)
         {
-
-            if(!(renderedTetrimino[k-rowNum][j] && thisBoard[k][j]))
+            if((rowNum + k) < ROWS && !(renderedTetrimino[k][j] && thisBoard[rowNum + k][j]))
             {
-                if(renderedTetrimino[k-rowNum][j])
+                if(renderedTetrimino[k][j])
                 {
-                    arr[k][j] = renderedTetrimino[k-rowNum][j];
+                    // if k is less than the number of rows we are still in bounds.
+                    if(rowNum + k < ROWS)
+                    {
+                        arr[rowNum + k][j] = renderedTetrimino[k][j];
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
                 else
                 {
-                    arr[k][j] = thisBoard[k][j];
+                    if(rowNum + k < ROWS)
+                    {
+                        arr[rowNum + k][j] = thisBoard[rowNum + k][j];
+                    }
                 }
                 
             }
@@ -847,105 +853,57 @@ function isValidMove(tetrimino, x, y, rotation, board)
     return board;
 }
 
-function init()
+var vertical = 0;
+var horizontal = 4;
+var rotation = 0;
+var current;
+var pieces = [i,s,z,l,j,o,t];
+
+/**
+This function will check if moving the current piece one position down.
+**/
+function newUpdate()
 {
-                board = createCleanBoard();
+    
+    newBoard = isValidMove(current, horizontal, vertical + 1 , rotation, board);
 
-                console.log("************");
-                printBoardToConsole(board);
-                newBoard = isValidMove(i, 4, 1, 2,board);
-
-                console.log("************");
-                printBoardToConsole(newBoard);
-
-                console.log("************");
-                printBoardToConsole(test1);
-
-
-                tet = renderTetrimino(5, i, 1);
-
-                console.log("************");
-                printBoardToConsole(tet);
-
-                
-                
-                newtest = drawTetriminoOnBoard(5, tet, test1);
-                
-                console.log("New Test ************");
-                printBoardToConsole(newtest);
-                
-                tet2 = renderTetrimino(5, i, 2);
-
-                console.log("New Test ************");
-                printBoardToConsole(tet2);
-                
-                secondNew = drawTetriminoOnBoard(3, tet2, newtest);
-                if(secondNew)
-                {
-                    console.log("Second New ************");
-                    printBoardToConsole(secondNew);
-                }
-                else
-                {
-                    console.log("The position is invalid because pieces overlap.");
-                }
-                
-
-                console.log("************");
-                printBoardToElement(test2, "board");
-                console.log("position: ");
-
-                paintPiece(z, 2);
-
-                for(var k = -3; k < 10; k++)
-                {
-                    render = renderTetrimino(k, i, 1);
-                    console.log("render tetrimino: ");
-                    if(render)
-                    {
-                        printBoardToConsole(render);
-                    } 
-                    else
-                    {
-                        console.log("Out of bounds");
-                    } 
-                }
-                
-
-                console.log(format4block((0x0E80&0x0F00)>>8));
-                console.log(position(0,  (0x0E80&0x0F00)>>8));
-                console.log(position(1,  (0x0E80&0x0F00)>>8));
-                console.log(position(2,  (0x0E80&0x0F00)>>8));
-                console.log(position(3,  (0x0E80&0x0F00)>>8));
-
-
+    if(newBoard)
+    { 
+        printBoardToElement(newBoard, "board");
+        printBoardToConsole(newBoard);
+        vertical = vertical + 1;
+    }
+    else
+    {
+        board = isValidMove(current, horizontal, vertical, rotation, board);
+        console.log("The piece reached bottom.");
+        current = pieces[3];
+        vertical = 0;
+        horizontal = 4;
+    }
+    /**
+    else
+    {
+        persistPiece(horizontal,vertical,current,rotation);
+        checkLines();
+        newPiece();
+        if(!checkPiecePosition(horizontal,vertical+1,current,rotation))
+        {
+            // GAME OVER, start over again.
+            init();
+        }    
+    }
+    **/
+    $("#board").empty();
+    printBoardToElement(newBoard, "board");
 }
 
+function init()
+{
+    board = createCleanBoard();
+    current = pieces[3];
 
-               test1 = createCleanBoard();
-
-                test2 = [[0,1,0,0,0,0,0,0,0,0],
-                [0,0,2,0,0,0,0,0,0,0],
-                [0,0,0,3,0,0,0,0,0,0],
-                [7,0,0,0,4,0,0,0,0,0],
-                [7,0,0,0,0,5,0,0,0,0],
-                [7,0,0,0,0,0,6,0,0,0],
-                [7,0,0,0,0,0,0,0,0,0],
-                [7,0,0,0,0,0,0,0,1,0],
-                [7,0,6,0,0,1,0,0,0,0],
-                [7,0,6,0,0,2,0,0,0,0],
-                [7,0,6,0,0,3,0,0,0,0],
-                [7,0,6,0,0,4,0,0,0,0],
-                [7,0,0,0,3,0,2,2,2,0],
-                [7,0,0,0,3,0,2,2,2,0],
-                [0,0,0,0,3,0,0,2,0,0],
-                [1,1,1,1,3,0,0,2,0,0],
-                [0,0,0,0,0,1,0,0,0,0],
-                [0,0,0,0,0,2,0,0,0,0],
-                [0,0,0,0,0,3,0,0,0,0],
-                [0,0,0,0,0,4,0,0,0,0],
-                [0,0,0,0,0,5,0,0,0,0],
-                [0,0,0,0,0,6,0,0,0,0]];
+}
 
 /**
 Main method of the game, it controls the initialization and the game loop.
@@ -955,7 +913,7 @@ function tetris()
     clearInterval(interval);
     init();
     //newPiece();
-    //interval = setInterval(update, 250);    
+    interval = setInterval(newUpdate, 100);    
 }
 
 $(document).ready(function()
