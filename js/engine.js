@@ -162,7 +162,7 @@ var z = { id: 'z', blocks: [0x0C60, 0x4C80, 0xC600, 0x2640], colorName: 'red'   
 
 var COLORS = 
 {
- 0:'black',
+ 0:'white',
  1:'cyan', 
  2:'blue', 
  3:'orange', 
@@ -199,16 +199,29 @@ function removeLine(n)
 function keyPress( key ) {
     switch ( key ) {
         case 'left':
-            horizontal--;
+            if(isValidMove(current, horizontal - 1, vertical, rotation, board))
+            {
+                horizontal--;
+            }
             break;
         case 'right':
-            horizontal++;
+            if(isValidMove(current, horizontal + 1, vertical, rotation, board))
+            {
+               horizontal++;
+            }
             break;
         case 'down':
-            vertical++;
+            if(isValidMove(current, horizontal, vertical + 1, rotation, board))
+            {
+                vertical++;
+            }
             break;
         case 'rotate':
-            rotation = (rotation+1)%4;
+	    rot = (rotation+1) % 4;
+            if(isValidMove(current, horizontal, vertical, rot, board))
+            {
+                rotation = rot;
+            }
             break;
     }
 }
@@ -524,7 +537,6 @@ function newPiece()
 function init()
 {
     board = createCleanBoard();
-    current = pieces[6];
 
 }
 
@@ -535,7 +547,7 @@ function tetris()
 {
     clearInterval(interval);
     init();
-    //newPiece();
+    newPiece();
     interval = setInterval(newUpdate, 100);    
 }
 
