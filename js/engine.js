@@ -179,434 +179,36 @@ var TETRIMINO_SIZE = 4;
 var TETRIMINO_HEIGHT = TETRIMINO_SIZE;
 var TETRIMINO_WIDTH = TETRIMINO_SIZE;
 
-function paintPieceInBoard(x,y,piece,direction)
-{
-    
-}
 
-function paintPiece(piece, rotation)
-{
-    var blocks = piece.blocks[rotation];
-    var first =  0x000F << (3 * 4);
-    var second = 0x000F << (2 * 4);
-    var third =  0x000F << (1 * 4);
-    var fourth = 0x000F << (0 * 4);
-    
-    console.log(format4block((blocks&first)  >> (3 * 4)));
-    console.log(format4block((blocks&second) >> (2 * 4)));
-    console.log(format4block((blocks&third)  >> (1 * 4)));
-    console.log(format4block(blocks&fourth)  >> (0 * 4));
-}
 
-/**
-
-**/
-function checkLines()
-{
-    var x, y, complete;
-    for(y = ROWS -1; y >= 0; y--) 
-    {
-        console.log(y);
-        complete = true;
-        for(x = 0; x < COLUMNS ; x++)
-        {
-            if(getBoardPosition(x,y)==0)
-            {
-                complete=false;
-            }
-        }
-        console.log(y+":"+complete);
-        if(complete)
-        {
-            removeLine(y);
-            y++;
-        }
-    }
-}
 
 /**
 This method will remove the n-th line by moving the lines below up.
 **/
 function removeLine(n)
 {
+    /**
     var y;
     for(y = n; y > 0; y--)
     {
         board[y] = board[y - 1];
     }
     board[0] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-}
-
-function checkPiecePosition(x,y,piece,direction)
-{
-    var blocks = piece.blocks[direction];
-    var row = 0;
-    var column = 0;
-    for ( bit = 0x8000 ; bit > 0 ; bit = bit >> 1)
-    {
-    //    console.log("----------------------------");
-    //    console.log(format16block(blocks));
-    //    console.log(format16block(bit));
-    //    console.log(bit & blocks);
-    //    console.log(bit & blocks?"true":"false");
-        
-        if(bit & blocks)
-        {
-            if(isInvalid(x+column,y+row))
-            {
-                return false;
-            }
-        }
-        
-    //    console.log("("+column+","+row+")");
-        
-        column++;
-        if(column%4 == 0)
-        {
-            row++;
-            column=0;
-        }
-    }
-    return true;
-}
-
-function formatNBlock(i,n)
-{
-    var result = "";
-    
-    if(i==0)
-    {
-        for(var j=0 ; j< n; j++)
-        {
-            result="0"+result;
-        }
-        return result;
-    }
-    if(i==1)
-    {
-        for(var j=0 ; j< n-1; j++)
-        {
-            result="0"+result;
-        }
-        return result+i;
-    }
-    var number = (1<<n)-1;
-    for(var j=n-1; j>=0; j--)
-    {
-        if(i>number)
-        {
-            for(var k=0 ; k< n-j-2; k++)
-            {
-                result="0"+result;
-            }
-            return result+i.toString(2);
-        }
-        number= number>>1;
-    }
-}
-
-function format4block(i)
-{
-    return formatNBlock(i,4);
-}
-
-function format16block(i)
-{
-    return formatNBlock(i,16);
-}
-
-function getRowFromPiece(row, piece, direction)
-{
-    var mask = 0xF << (row * 4);
-    var blocks = piece.blocks[direction];
-    var row = (mask & blocks) >> (row * 4);
-    
-    return new Array(row & (1<<3), row & (1<<2), row & (1<<1), row & 1);
-}
-
-function getBoardPosition(x,y)
-{
-    return board[y][x];
-}
-
-function isInvalid(x,y)
-{
-    if ((x < 0) || (x >= COLUMNS) || (y < 0) || (y >= ROWS) || getBoardPosition(x,y))
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-
-function isValid(x,y)
-{
-    !isInvalid(x,y);
-}
-
-function draw()
-{
-    for ( var y = 2; y < ROWS ; y++ )
-    {
-        var newRowContent = "<tr><td>"+drawRow(board[y])+"</td></tr>";
-        //console.log(newRowContent);
-        $("#tetris tbody").append(newRowContent);
-    }
-}
-
-function drawRow(row)
-{
-    var out = "";
-    for ( var x = 0; x < COLUMNS ; x++ )
-    {
-        out = out + (row[x]?"<span class='red'>" + row[x] + "</span>":"<span class='white'>0</span>");
-    }
-    return out;
-}
-
-
-function drawRowPieceAndBoard(c,pieceRow,row,color)
-{
-    var out = "";
-    var col = 0;
-    
-    
-    for ( var x = 0; x < COLUMNS ; x++ )
-    {
-        //console.log(c+","+col+","+x);
-        if(x==c+col)
-        {
-            //console.log(c+","+col+","+x+","+row[x]+","+pieceRow[col]);
-            out = out + (row[x]^pieceRow[col]?"<span class="+"'"+"red"+"'"+">1</span>":"<span class='white'>0</span>");
-            col++;
-            if(col%4==0)
-            {
-                col=0;
-            }
-        }
-        else
-        {
-            out = out + (row[x]?"<span class='red'>1</span>":"<span class='white'>0</span>");
-
-        }
-    }
-    return out;
-}
-
-function drawPieceAndBoard(x,y,piece,direction)
-{
-    var row = 0;
-    var newRowContent;
-    for ( var yay = 2; yay < ROWS ; yay++ )
-    {
-        if(yay==y+row)
-        {
-            newRowContent = "<tr><td>"+drawRowPieceAndBoard(x,getRowFromPiece((3-row),piece,direction),board[yay],piece.colorName)+"</td></tr>";
-            row++;
-            if(row%4==0)
-            {
-                row=0;
-            }
-        }
-        else
-        {
-        //    console.log("alooo" + board[yay]);
-            newRowContent = "<tr><td>"+drawRow(board[yay])+"</td></tr>";
-            
-        }
-        //console.log(newRowContent);
-        $("#tetris tbody").append(newRowContent);
-    }
-}
-
-function persistPiece(x, y, piece, rotation)
-{
-    var blocks = piece.blocks[rotation];
-    var row = 0;
-    var column = 0;
-    for (bit = 0x8000 ; bit > 0 ; bit = bit >> 1)
-    {
-        //    console.log("----------------------------");
-        //    console.log(format16block(blocks));
-        //    console.log(format16block(bit));
-        //    console.log(bit & blocks);
-        //    console.log(bit & blocks?"true":"false");
-        
-        if(bit & blocks)
-        {
-            board[y + row][x + column] = 1; //TODO: piece.color;    
-        }
-        column++;
-        if(column%4 == 0)
-        {
-            row++;
-            column = 0;
-        }
-    }
-    return true;
-}
-
-
-
-
-
-
-
-/**
-This function will check if moving the current piece one position down.
-**/
-function update()
-{
-    console.log("update");
-    thing();
-    if(checkPiecePosition(horizontal,vertical + 1,current,rotation))
-    {
-        vertical++;  
-    }
-    else
-    {
-        persistPiece(horizontal,vertical,current,rotation);
-        checkLines();
-        newPiece();
-        if(!checkPiecePosition(horizontal,vertical+1,current,rotation))
-        {
-            // GAME OVER, start over again.
-            init();
-        }    
-    }
-    // Clear the screen to paint again.
-    $("#board").empty();
-    drawPieceAndBoard(horizontal,vertical,current,rotation);
-}
-
-/**
-Debugging purpose function.
-**/
-function printAllPieces()
-{
-    console.log("ssssssssssssss");
-    paintPiece(s,0);
-    console.log("ssssssssssssss");
-    paintPiece(s,1);
-    console.log("ssssssssssssss");
-    paintPiece(s,2);
-    console.log("ssssssssssssss");
-    paintPiece(s,3);
-    console.log("zzzzzzzzzzzzzz");
-    paintPiece(z,0);
-    console.log("zzzzzzzzzzzzzz");
-    paintPiece(z,1);
-    console.log("zzzzzzzzzzzzzz");
-    paintPiece(z,2);
-    console.log("zzzzzzzzzzzzzz");
-    paintPiece(z,3);
-    console.log("llllllllllllll");
-    paintPiece(l,0);
-    console.log("llllllllllllll");
-    paintPiece(l,1);
-    console.log("llllllllllllll");
-    paintPiece(l,2);
-    console.log("llllllllllllll");
-    paintPiece(l,3);
-    console.log("oooooooooooooo");
-    paintPiece(o,0);
-    console.log("oooooooooooooo");
-    paintPiece(o,1);
-    console.log("oooooooooooooo");
-    paintPiece(o,2);
-    console.log("oooooooooooooo");
-    paintPiece(o,3);
-    console.log("iiiiiiiiiiiiii");
-    paintPiece(i,0);
-    console.log("iiiiiiiiiiiiii");
-    paintPiece(i,1);
-    console.log("iiiiiiiiiiiiii");
-    paintPiece(i,2);
-    console.log("iiiiiiiiiiiiii");
-    paintPiece(i,3);
-    console.log("jjjjjjjjjjjjjj");
-    paintPiece(j,0);
-    console.log("jjjjjjjjjjjjjj");
-    paintPiece(j,1);
-    console.log("jjjjjjjjjjjjjj");
-    paintPiece(j,2);
-    console.log("jjjjjjjjjjjjjj");
-    paintPiece(j,3);
-    console.log("tttttttttttttt");
-    paintPiece(t,0);
-    console.log("tttttttttttttt");
-    paintPiece(t,1);
-    console.log("tttttttttttttt");
-    paintPiece(t,2);
-    console.log("tttttttttttttt");
-    paintPiece(t,3);
-}
-
-function thing()
-{
-    example = 0xF000;
-    console.log(example);
-    for (bit = 0x8000 ; bit > 0 ;bit = bit >> 1)
-    {
-	console.log(bit);
-    }
-}
-
-/**
-Debugging purpose function.
-**/
-function test()
-{
-    var xa = 0;
-    var ya = 0;
-    
-    if(checkPiecePosition(xa,ya,i,0))
-    {
-        console.log("Piece can be placed at ("+xa+","+ya+")");
-    }
-    else
-    {
-        console.log("Piece can't be placed at ("+xa+","+ya+")");
-    }
-/**    
-    
-    console.log(isInvalid(3, 5)?"Invalid":"Valid");
-    console.log(isInvalid(0, 0)?"Invalid":"Valid");
-    
-    console.log(formatNBlock(5,10));
-    console.log(formatNBlock(5,5));
-    console.log(formatNBlock(5,6));
-    console.log("Get row from piece.");
-    console.log(getRowFromPiece(0,z,3));
-    console.log(getRowFromPiece(1,z,3));
-    console.log(getRowFromPiece(2,z,3));
-    console.log(getRowFromPiece(3,z,3));
-**/
+    **/
 }
 function keyPress( key ) {
     switch ( key ) {
         case 'left':
-            if ( checkPiecePosition(horizontal-1,vertical,current,rotation))
-            {
-               horizontal--;
-            }
+            horizontal--;
             break;
         case 'right':
-            if ( checkPiecePosition(horizontal+1,vertical,current,rotation)) {
-                horizontal++;
-            }
+            horizontal++;
             break;
         case 'down':
-            if ( checkPiecePosition(horizontal,vertical+1,current,rotation)) {
-                vertical++;
-            }
+            vertical++;
             break;
         case 'rotate':
-            if (checkPiecePosition(horizontal,vertical+1,current,(rotation+1)%4)) {
-                rotation = (rotation+1)%4;
-            }
+            rotation = (rotation+1)%4;
             break;
     }
 }
@@ -866,27 +468,45 @@ function newUpdate()
     else
     {
         board = isValidMove(current, horizontal, vertical, rotation, board);
+        
+        checkLines();
         newPiece();
+
         if(!isValidMove(current, horizontal, vertical + 1 , rotation, board))
         {
             init();
         }
     }
-    /**
-    else
-    {
-        persistPiece(horizontal,vertical,current,rotation);
-        checkLines();
-        newPiece();
-        if(!checkPiecePosition(horizontal,vertical+1,current,rotation))
-        {
-            // GAME OVER, start over again.
-            init();
-        }    
-    }
-    **/
     $("#board").empty();
     printBoardToElement(newBoard, "board");
+}
+
+/**
+
+**/
+function checkLines()
+{
+    /**
+    var x, y, complete;
+    for(y = ROWS -1; y >= 0; y--) 
+    {
+        console.log(y);
+        complete = true;
+        for(x = 0; x < COLUMNS ; x++)
+        {
+            if(getBoardPosition(x,y)==0)
+            {
+                complete=false;
+            }
+        }
+        console.log(y+":"+complete);
+        if(complete)
+        {
+            removeLine(y);
+            y++;
+        }
+    }
+    **/
 }
 
 /**
@@ -922,7 +542,6 @@ function tetris()
 $(document).ready(function()
 {
     tetris();
-    test();
 });
 
 $(document).keydown(function( e ) {
