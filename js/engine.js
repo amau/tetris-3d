@@ -642,7 +642,7 @@ function printBoardToElement(board, element)
         row = "<td>";
         for(var j = 0; j < COLUMNS; j++)
         {
-            row = row + "<span class='" + getColor(board[i][j]) + "'>" + board[i][j] + "</span>";
+            row = row + "<span class='" + getColor(board[i][j]) + (board[i][j]?" bold":"") + "'>" + board[i][j] + "</span>";
         }
         row = row + "</td>";
         td.innerHTML = row;
