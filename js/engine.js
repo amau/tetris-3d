@@ -448,7 +448,6 @@ function isValidMove(tetrimino, x, y, rotation, board)
     {
         return false;
     }
-    return board;
 }
 
 var vertical = 0;
@@ -487,7 +486,11 @@ function newUpdate()
             init();
         }
     }
-    $("#board").empty();
+    var myNode = document.getElementById("board");
+    while (myNode.firstChild) 
+    {
+        myNode.removeChild(myNode.firstChild);
+    }
     printBoardToElement(newBoard, "board");
 }
 
@@ -547,12 +550,13 @@ function tetris()
     interval = setInterval(newUpdate, 200);    
 }
 
-$(document).ready(function()
-{
-    tetris();
-});
 
-$(document).keydown(function( e ) {
+
+
+document.addEventListener("keydown", keyDownTextField, false);
+
+function keyDownTextField( e ) 
+{
     console.log("Key pressed");
     var keys = {
         37: 'left',
@@ -560,8 +564,11 @@ $(document).keydown(function( e ) {
         40: 'down',
         38: 'rotate'
     };
-    if ( typeof keys[ e.keyCode ] != 'undefined' ) {
+    if ( typeof keys[ e.keyCode ] != 'undefined' ) 
+    {
         keyPress( keys[ e.keyCode ] );
         //update();
     }
-});
+}
+
+tetris();
