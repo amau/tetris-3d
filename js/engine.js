@@ -390,7 +390,6 @@ Creates a copy of the board and returns the new array.
 **/
 function copyBoard(board)
 {
-    console.log(board);
     var arr = createZerosGrid(COLUMNS, ROWS);
     for(var k = 0; k < ROWS; k++)
     {
@@ -432,12 +431,7 @@ configuration given.
 **/
 function isValidMove(tetrimino, x, y, rotation, board)
 {
-    console.log(x+","+y+","+rotation);
-
     renderedTetrimino = renderTetrimino(x, tetrimino, rotation);
-
-    console.log(renderedTetrimino);
-
     if(renderedTetrimino)
     {
         newBoard = drawTetriminoOnBoard(y, renderedTetrimino, board);
@@ -454,7 +448,6 @@ function isValidMove(tetrimino, x, y, rotation, board)
     {
         return false;
     }
-
     return board;
 }
 
@@ -482,7 +475,11 @@ function newUpdate()
     {
         board = isValidMove(current, horizontal, vertical, rotation, board);
         
-        checkLines();
+        board = checkLines(board);
+
+        printBoardToElement(board, "board");
+        printBoardToConsole(board);
+
         newPiece();
 
         if(!isValidMove(current, horizontal, vertical + 1 , rotation, board))
@@ -497,29 +494,28 @@ function newUpdate()
 /**
 
 **/
-function checkLines()
+function checkLines(board)
 {
-    /**
-    var x, y, complete;
-    for(y = ROWS -1; y >= 0; y--) 
+    var arr = createCleanBoard();
+    var counter = board.length - 1;
+
+    for(var k = board.length - 1; k > -1; k--)
     {
-        console.log(y);
-        complete = true;
-        for(x = 0; x < COLUMNS ; x++)
+        rowSum = 0;
+        for(var j = 0; j < board[0].length; j++)
         {
-            if(getBoardPosition(x,y)==0)
+            if(board[k][j])
             {
-                complete=false;
+                rowSum++;
             }
         }
-        console.log(y+":"+complete);
-        if(complete)
+        if(rowSum < board[0].length)
         {
-            removeLine(y);
-            y++;
+            arr[counter] = board[k];
+            counter--;
         }
     }
-    **/
+    return arr;
 }
 
 /**
@@ -548,7 +544,7 @@ function tetris()
     clearInterval(interval);
     init();
     newPiece();
-    interval = setInterval(newUpdate, 100);    
+    interval = setInterval(newUpdate, 200);    
 }
 
 $(document).ready(function()
