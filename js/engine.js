@@ -452,16 +452,7 @@ function persistPiece(x, y, piece, rotation)
 
 
 
-/**
-This function will spawn a new piece into the board, it sets the original position and rotation.
-**/
-function newPiece()
-{
-    vertical = 0;
-    horizontal = 4;
-    rotation = 0;
-    current = pieces[Math.floor((Math.random() * pieces.length))];    
-}
+
 
 /**
 This function will check if moving the current piece one position down.
@@ -643,7 +634,7 @@ function printBoardToElement(board, element)
 {
     console.log(board);
     var row = "";
-    for(var i = 0; i < ROWS; i++)
+    for(var i = 2; i < ROWS; i++)
     {
         tbody = document.getElementById(element);;
         tr = tbody.insertRow(-1);
@@ -744,38 +735,37 @@ function drawTetriminoOnBoard(rowNum, renderedTetrimino, thisBoard)
     var arr = copyBoard(thisBoard);
     for(var k = 0; k < TETRIMINO_HEIGHT; k++)
     {
+        var isNotEmpty = false;
         for(var j = 0; j < COLUMNS; j++)
         {
-            if((rowNum + k) < ROWS && !(renderedTetrimino[k][j] && thisBoard[rowNum + k][j]))
+            if(rowNum + k < ROWS)
             {
-                if(renderedTetrimino[k][j])
+                if(!(renderedTetrimino[k][j] && thisBoard[rowNum + k][j]))
                 {
-                    // if k is less than the number of rows we are still in bounds.
-                    if(rowNum + k < ROWS)
+                    if(renderedTetrimino[k][j])
                     {
                         arr[rowNum + k][j] = renderedTetrimino[k][j];
                     }
                     else
                     {
-                        return false;
+                        arr[rowNum + k][j] = thisBoard[rowNum + k][j];
                     }
+                    
                 }
                 else
                 {
-                    if(rowNum + k < ROWS)
-                    {
-                        arr[rowNum + k][j] = thisBoard[rowNum + k][j];
-                    }
+                    // If a pieze in the rendered tetrimino is in the same position
+                    // as one in the board the position is invalid.
+                    return false;
                 }
-                
             }
             else
             {
-                // If a pieze in the rendered tetrimino is in the same position
-                // as one in the board the position is invalid.
-                return false;
+                if(renderedTetrimino[k][j])
+                {
+                    return false;
+                }
             }
-            
         } 
     }
     return arr;
@@ -876,10 +866,11 @@ function newUpdate()
     else
     {
         board = isValidMove(current, horizontal, vertical, rotation, board);
-        console.log("The piece reached bottom.");
-        current = pieces[3];
-        vertical = 0;
-        horizontal = 4;
+        newPiece();
+        if(!isValidMove(current, horizontal, vertical + 1 , rotation, board))
+        {
+            init();
+        }
     }
     /**
     else
@@ -898,10 +889,22 @@ function newUpdate()
     printBoardToElement(newBoard, "board");
 }
 
+/**
+This function will spawn a new piece into the board, it sets the original position and rotation.
+**/
+function newPiece()
+{
+    vertical = 0;
+    horizontal = 4;
+    rotation = 0;
+    current = pieces[Math.floor((Math.random() * pieces.length))];    
+}
+
+
 function init()
 {
     board = createCleanBoard();
-    current = pieces[3];
+    current = pieces[6];
 
 }
 
